@@ -21,16 +21,4 @@ public class PropertiesUtil{
         return defaultValue;
     }
 
-    public static int getInt(String a){
-        if( !Strings.isNullOrEmpty( a ) ) {
-            try {
-                return Integer.parseInt( a );
-            } catch( Exception exception ) {
-                exception.printStackTrace();
-            }
-        }
-        return 20;
-    }
-
-
 }

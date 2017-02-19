@@ -16,42 +16,43 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by liulaoye on 17-2-17.
+ * 缺省的服务器实现
  */
 public class DefaultServer implements IServer{
 
     private static final Logger LOG = LoggerFactory.getLogger( DefaultServer.class );
 
     /**
-     * 最长的包长度
+     * 缺省的服务器名字
+     */
+
+    private static final String SERVER_ALIAS_DEFAULT = "GUOTU server";
+
+    /**
+     * 最大的包长度
      */
     private static final int MAX_FRAME_SIZE_DEFAULT = 2048;
 
     /**
      * 缺省的监听端口
      */
-    public static final int PORT = 8080;
+    public static final int PORT_DEFAULT = 8080;
 
     /**
-     * 缺省的服务器名字
+     * The alias or pseudonym for this server, used when adding the Via header.
      */
-
-    /**
-     * The alias or pseudonym for this proxy, used when adding the Via header.
-     */
-    private final String proxyAlias;
+    private final String proxyAlias = "guotu transform server";
 
     /**
      * True when the server has already been stopped by calling {@link #stop()} or {@link #abort()}.
      */
     private final AtomicBoolean stopped = new AtomicBoolean( false );
 
-    private static final String FALLBACK_SERVER_ALIAS = "GUOTU server";
-
 
     /**
      * Keep track of all channels created by this  server for later shutdown when the proxy is stopped.
      */
-    private final ChannelGroup allChannels = new DefaultChannelGroup( "GUOTU-Server", GlobalEventExecutor.INSTANCE );
+    private final ChannelGroup allChannels = new DefaultChannelGroup( proxyAlias, GlobalEventExecutor.INSTANCE );
     private final Thread jvmShutdownHook = new Thread( new Runnable(){
 
         @Override

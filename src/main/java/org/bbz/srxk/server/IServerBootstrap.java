@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 
 /**
  * Created by liulaoye on 17-2-17.
+ * 启动辅助类接口
  */
 public interface IServerBootstrap{
     /**
@@ -12,7 +13,7 @@ public interface IServerBootstrap{
      * </p>
      * <p>
      * <p>
-     * Default = LittleProxy
+     * Default = GUOTU server
      * </p>
      *
      * @param name
