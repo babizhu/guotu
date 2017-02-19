@@ -1,7 +1,12 @@
 package org.bbz.srxk.server;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +23,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by liulaoye on 17-2-17.
  * 缺省的服务器实现
  */
-public class DefaultServer implements IServer{
+public class DefaultServer implements IServer {
 
-    private static final Logger LOG = LoggerFactory.getLogger( DefaultServer.class );
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultServer.class);
 
     /**
      * 缺省的服务器名字
@@ -43,70 +48,110 @@ public class DefaultServer implements IServer{
      */
     private final String proxyAlias = "guotu transform server";
 
+
     /**
      * True when the server has already been stopped by calling {@link #stop()} or {@link #abort()}.
      */
-    private final AtomicBoolean stopped = new AtomicBoolean( false );
+    private final AtomicBoolean stopped = new AtomicBoolean(false);
 
 
     /**
      * Keep track of all channels created by this  server for later shutdown when the proxy is stopped.
      */
-    private final ChannelGroup allChannels = new DefaultChannelGroup( proxyAlias, GlobalEventExecutor.INSTANCE );
-    private final Thread jvmShutdownHook = new Thread( new Runnable(){
+    private final ChannelGroup allChannels = new DefaultChannelGroup(proxyAlias, GlobalEventExecutor.INSTANCE);
+    private final Thread jvmShutdownHook = new Thread(new Runnable() {
 
         @Override
-        public void run(){
+        public void run() {
             abort();
         }
-    }, "GUOTO-SERVER-JVM-shutdown-hook" );
+    }, "GUOTO-SERVER-JVM-shutdown-hook");
+    private InetSocketAddress requestedAddress, boundAddress;
+
+    public DefaultServer(InetSocketAddress requestedAddress) {
+        this.requestedAddress = requestedAddress;
+    }
 
 
-    public int getIdleConnectionTimeout(){
+    public int getIdleConnectionTimeout() {
         return 0;
     }
 
-    public void setIdleConnectionTimeout( int idleConnectionTimeout ){
+    public void setIdleConnectionTimeout(int idleConnectionTimeout) {
 
     }
 
-    public int getConnectTimeout(){
+    public int getConnectTimeout() {
         return 0;
     }
 
-    public void setConnectTimeout( int connectTimeoutMs ){
+    public void setConnectTimeout(int connectTimeoutMs) {
 
     }
 
-    public void stop(){
+    public void stop() {
 
     }
 
-    public void abort(){
+    public void abort() {
 
     }
 
-    public InetSocketAddress getListenAddress(){
+    public InetSocketAddress getListenAddress() {
         return null;
     }
 
-    public void setThrottle( long readThrottleBytesPerSecond, long writeThrottleBytesPerSecond ){
+    public void setThrottle(long readThrottleBytesPerSecond, long writeThrottleBytesPerSecond) {
 
     }
 
-    public static IServerBootstrap bootstrapFromFile( String path ){
-        final File propsFile = new File( path );
+    public static IServerBootstrap bootstrapFromFile(String path) {
+        final File propsFile = new File(path);
         Properties props = new Properties();
 
-        if( propsFile.isFile() ) {
-            try( InputStream is = new FileInputStream( propsFile ) ) {
-                props.load( is );
-            } catch( final IOException e ) {
-                LOG.warn( "Could not load props file?", e );
+        if (propsFile.isFile()) {
+            try (InputStream is = new FileInputStream(propsFile)) {
+                props.load(is);
+            } catch (final IOException e) {
+                LOG.warn("Could not load props file?", e);
             }
         }
 
-        return new ServerBootstrap( props );
+        return new ServerBootstrap(props);
 //        return new ServerBootstrap();
     }
+
+    protected IServer start() {
+        EventLoopGroup boss = new NioEventLoopGroup();
+        EventLoopGroup work = new NioEventLoopGroup();
+        io.netty.bootstrap.ServerBootstrap serverBootstrap = new io.netty.bootstrap.ServerBootstrap().group(boss, work);
+
+        ChannelFuture future = serverBootstrap.bind(requestedAddress)
+                .addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        if (future.isSuccess()) {
+                            registerChannel(future.channel());
+                        }
+                    }
+
+
+                }).awaitUninterruptibly();
+
+        Throwable cause = future.cause();
+        if (cause != null) {
+            throw new RuntimeException(cause);
+        }
+
+        this.boundAddress = ((InetSocketAddress) future.channel().localAddress());
+        LOG.info("Server started at address: " + this.boundAddress);
+
+        Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
+        return this;
+    }
+
+    private void registerChannel(Channel channel) {
+    }
+
+
 }

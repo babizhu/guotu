@@ -15,13 +15,15 @@ public class ServerBootstrap implements IServerBootstrap {
      * server 监听端口
      */
     private int port;
+    private int maxFrameSize;
+    private InetSocketAddress requestedAddress;
+    private boolean allowLocalOnly;
 
     public ServerBootstrap(Properties props) {
 
 
         this.withPort(PropertiesUtil.getInt(props, "port", DefaultServer.PORT_DEFAULT));
     }
-
 
 
     @Override
@@ -52,7 +54,8 @@ public class ServerBootstrap implements IServerBootstrap {
 
     @Override
     public IServerBootstrap withMaxFrameSize(int maxChunkSize) {
-        return null;
+        this.maxFrameSize = maxChunkSize;
+        return this;
     }
 
     @Override
@@ -62,7 +65,25 @@ public class ServerBootstrap implements IServerBootstrap {
 
     @Override
     public IServer start() {
-        return null;
+        return build().start();
+    }
+
+    private DefaultServer build() {
+        return new DefaultServer(determineListenAddress());
+    }
+
+    private InetSocketAddress determineListenAddress() {
+        if (requestedAddress != null) {
+            return requestedAddress;
+        } else {
+            // Binding only to localhost can significantly improve the
+            // security of the proxy.
+            if (allowLocalOnly) {
+                return new InetSocketAddress("127.0.0.1", port);
+            } else {
+                return new InetSocketAddress(port);
+            }
+        }
     }
 
 }
