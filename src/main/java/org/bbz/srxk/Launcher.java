@@ -1,8 +1,9 @@
 package org.bbz.srxk;
 
 
-import org.bbz.srxk.server.DefaultServer;
-import org.bbz.srxk.server.IServerBootstrap;
+import org.bbz.srxk.guotu.server.DefaultGuotuServer;
+import org.bbz.srxk.guotu.server.IServer;
+import org.bbz.srxk.guotu.server.IServerBootstrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +27,15 @@ public class Launcher {
      */
     public static void main(final String... args) {
 
-        LOG.info("Beging to running GUOTU server");
+        System.out.println("Beging to running GUOTU server\n");
 //        System.out.println("About to start server on port: " + port);
-        IServerBootstrap bootstrap = DefaultServer.bootstrapFromFile("./server.properties");
+        IServerBootstrap bootstrap = DefaultGuotuServer.bootstrapFromFile("./server.properties");
 
-        System.out.println("About to start...");
-        bootstrap.start();
+        final IServer server = bootstrap.start();
+        System.out.println( "Server started at address: " + server.getListenAddress() );
+        System.out.println( "------------------------------------------------------------" );
+        System.out.println( "------------------------------------------------------------" );
+
     }
 //
 //    private static void printHelp(final Options options,

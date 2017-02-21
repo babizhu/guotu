@@ -1,4 +1,4 @@
-package org.bbz.srxk.server;
+package org.bbz.srxk.guotu.server;
 
 import java.net.InetSocketAddress;
 
@@ -49,6 +49,7 @@ public interface IServer{
      * @param writeThrottleBytesPerSecond
      */
     void setThrottle( long readThrottleBytesPerSecond, long writeThrottleBytesPerSecond );
+
 }
 
 

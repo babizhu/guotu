@@ -1,4 +1,4 @@
-package org.bbz.srxk.misc;
+package org.bbz.srxk.guotu.misc;
 
 import com.google.common.base.Strings;
 
@@ -18,6 +18,7 @@ public class PropertiesUtil{
                 exception.printStackTrace();
             }
         }
+
         return defaultValue;
     }
 
