@@ -16,6 +16,7 @@ public class IntProccessHandler2 extends SimpleChannelInboundHandler<Integer>{
     protected void channelRead0( ChannelHandlerContext ctx, Integer msg ) throws Exception{
         LOG.debug( msg.toString() );
 //        msg.release();
+        ctx.fireChannelRead( msg );
 
     }
 }

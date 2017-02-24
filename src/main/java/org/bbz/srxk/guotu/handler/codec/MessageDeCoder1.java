@@ -8,21 +8,24 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Created by liulaoye on 17-2-20.
- * 根据包长度来解包
+ * <p>
+ * 根据包长度来解包,这个属于大压力测试环境
+ * 正式环境勿用
+ * </p>
  */
-public class MessageDeCoder extends LengthFieldBasedFrameDecoder{
-    private static final Logger LOG = LoggerFactory.getLogger( MessageDeCoder.class );
+public class MessageDeCoder1 extends LengthFieldBasedFrameDecoder{
+    private static final Logger LOG = LoggerFactory.getLogger( MessageDeCoder1.class );
 
     private final static int MAX_FRAME_LENGTH = 8192,
             LENGTH_FILED_OFFSET = 1,
-            LENGTH_FIELD_LENGTH = 1;//真实环境
-//            LENGTH_FIELD_LENGTH = 2;//大包压力测试环境
+//            LENGTH_FIELD_LENGTH = 1;//真实环境
+            LENGTH_FIELD_LENGTH = 2;//大包压力测试环境
 
-    public MessageDeCoder( int maxFrameLength, int lengthFieldOffset, int lengthFieldLength ){
+    public MessageDeCoder1( int maxFrameLength, int lengthFieldOffset, int lengthFieldLength ){
         super( maxFrameLength, lengthFieldOffset, lengthFieldLength );
     }
 
-    public MessageDeCoder(){
+    public MessageDeCoder1(){
         this( MAX_FRAME_LENGTH, LENGTH_FILED_OFFSET, LENGTH_FIELD_LENGTH );
     }
 
@@ -33,8 +36,8 @@ public class MessageDeCoder extends LengthFieldBasedFrameDecoder{
             return null;
         }
         byte head = frame.readByte();
-        short len = frame.readUnsignedByte();//真实环境
-//        short len = frame.readShort();//测试环境
+//        short len = frame.readUnsignedByte();//真实环境
+        short len = frame.readShort();//测试环境
         short cmdId = frame.readUnsignedByte();
         int dataLen = frame.writerIndex() - 2 - 7 - frame.readerIndex();//2 for checksum, 7 from tiemstamp
         ByteBuf data = frame.slice(frame.readerIndex(),dataLen );

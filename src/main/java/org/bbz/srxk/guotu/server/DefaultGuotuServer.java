@@ -131,7 +131,7 @@ public class DefaultGuotuServer implements IServer{
 
     protected IServer start(){
 
-        EventLoopGroup boss = new NioEventLoopGroup();
+        EventLoopGroup boss = new NioEventLoopGroup(1);
         EventLoopGroup worker = new NioEventLoopGroup();
 
         final ServerBootstrap b = new ServerBootstrap();
