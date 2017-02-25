@@ -2,6 +2,7 @@ package org.bbz.srxk.guotu.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.bbz.srxk.guotu.handler.cmd.LoginCmd;
 import org.bbz.srxk.guotu.handler.codec.MessageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +17,13 @@ public class ProcessHandler extends SimpleChannelInboundHandler<MessageContainer
 
     @Override
     protected void channelRead0( ChannelHandlerContext ctx, MessageContainer container ) throws Exception{
-        int data = container.getData().readInt();
+        switch ( container.getCmdId() ){
+            case 2:
+                new LoginCmd( ctx, container.getData() ).run();
+                break;
+                default:
+                    LOG.debug("未实现的功能");
 
-        if( logCount++ % 20 == 0 ) {
-
-            LOG.debug( ctx.channel().remoteAddress() + " : " + container.toString() );
-//            LOG.debug( data + "" );
-            System.out.println( "\n" );
         }
     }
 

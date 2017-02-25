@@ -15,11 +15,12 @@ public class MessageDeCoder extends LengthFieldBasedFrameDecoder{
 
     private final static int MAX_FRAME_LENGTH = 8192,
             LENGTH_FILED_OFFSET = 1,
+            LENGTH_ADJUSTMENT = -1,
             LENGTH_FIELD_LENGTH = 1;//真实环境
 //            LENGTH_FIELD_LENGTH = 2;//大包压力测试环境
 
     public MessageDeCoder( int maxFrameLength, int lengthFieldOffset, int lengthFieldLength ){
-        super( maxFrameLength, lengthFieldOffset, lengthFieldLength );
+        super( maxFrameLength, lengthFieldOffset, lengthFieldLength,LENGTH_ADJUSTMENT,0 );
     }
 
     public MessageDeCoder(){
