@@ -18,6 +18,7 @@ public class ProcessHandler extends SimpleChannelInboundHandler<MessageContainer
 
     @Override
     protected void channelRead0( ChannelHandlerContext ctx, MessageContainer container ) throws Exception{
+        LOG.debug(container.toString());
         switch ( container.getCmdId() ){
             case 2:
                 new LoginCmd( ctx, container.getData() ).run();
@@ -26,7 +27,7 @@ public class ProcessHandler extends SimpleChannelInboundHandler<MessageContainer
                 new RainfallCmd(ctx,container.getData()).run();
                 break;
                 default:
-                    LOG.debug("Command not found!!!");
+                    LOG.debug("Command ("+ container.getCmdId()+") not found!!!");
 
         }
     }
