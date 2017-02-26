@@ -3,6 +3,7 @@ package org.bbz.srxk.guotu.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.bbz.srxk.guotu.handler.cmd.LoginCmd;
+import org.bbz.srxk.guotu.handler.cmd.RainfallCmd;
 import org.bbz.srxk.guotu.handler.codec.MessageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,11 @@ public class ProcessHandler extends SimpleChannelInboundHandler<MessageContainer
             case 2:
                 new LoginCmd( ctx, container.getData() ).run();
                 break;
+            case 1:
+                new RainfallCmd(ctx,container.getData()).run();
+                break;
                 default:
-                    LOG.debug("未实现的功能");
+                    LOG.debug("Command not found!!!");
 
         }
     }

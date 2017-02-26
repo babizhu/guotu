@@ -37,9 +37,9 @@ public class MessageDeCoder extends LengthFieldBasedFrameDecoder{
         short len = frame.readUnsignedByte();//真实环境
 //        short len = frame.readShort();//测试环境
         short cmdId = frame.readUnsignedByte();
-        int dataLen = frame.writerIndex() - 2 - 7 - frame.readerIndex();//2 for checksum, 7 from tiemstamp
+        int dataLen = frame.writerIndex() - 2  - frame.readerIndex();//2 for checksum
         ByteBuf data = frame.slice(frame.readerIndex(),dataLen );
-        frame.skipBytes( dataLen + 7 );//7 from tiemstamp
+//        frame.skipBytes( dataLen + 7 );//7 from tiemstamp
         byte[] checkSum = new byte[2];//2 for checksum
         frame.readBytes( checkSum );
 
@@ -47,4 +47,6 @@ public class MessageDeCoder extends LengthFieldBasedFrameDecoder{
 //        return new String(frame.getInt( 2 ) + "");
 //        return frame;
     }
+
+
 }

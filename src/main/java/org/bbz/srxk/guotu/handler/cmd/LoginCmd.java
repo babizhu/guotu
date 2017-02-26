@@ -10,6 +10,7 @@ import java.util.Date;
 
 /**
  * Created by liukun on 2017/2/25.
+ * logincmd
  */
 public class LoginCmd extends AbstractCmd {
 
@@ -25,6 +26,7 @@ public class LoginCmd extends AbstractCmd {
 
     @Override
     public void run() {
+
 
         ctx.writeAndFlush(buildServerTime());
     }
@@ -47,7 +49,7 @@ public class LoginCmd extends AbstractCmd {
         timeBuf.writeByte(cal.get(Calendar.SECOND));//秒
 
         timeBuf.writeByte(cal.get(Calendar.YEAR) % 2000);//年
-        timeBuf.writeByte(cal.get(Calendar.MONTH + 1));//月
+        timeBuf.writeByte(cal.get(Calendar.MONTH) + 1);//月
         timeBuf.writeByte(cal.get(Calendar.DAY_OF_MONTH));//日
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         dayOfWeek = dayOfWeek == 1 ? 7 : dayOfWeek - 1;
@@ -60,11 +62,17 @@ public class LoginCmd extends AbstractCmd {
         return timeBuf;
     }
 
+    @Override
+    public String toString() {
+        return "LoginCmd{" +
+                "clientId=" + clientId +
+                '}';
+    }
 
     @Override
     void parse() {
         clientId = data.getInt(2);
-        LOG.debug("clientId is " + clientId);
+        LOG.debug(toString());
 
     }
 }
