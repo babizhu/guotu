@@ -51,6 +51,13 @@ public class RainfallCmd extends AbstractCmd{
         response.writeByte( 0x88 );
         response.writeByte( 0x88 );
 
+        if( this.rainfall > 0 ){
+            response.writeInt( 0 );
+            response.writeByte( 0xdd );
+            response.writeShort( 1 );
+            response.writeByte( 0x00 );
+            response.writeByte( 0x01 );
+        }
         return response;
     }
 
