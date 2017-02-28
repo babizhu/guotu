@@ -21,7 +21,6 @@ public class GuotuServerBootstrap implements IServerBootstrap{
 
     public GuotuServerBootstrap( Properties props ){
 
-
         this.withPort( PropertiesUtil.getInt( props, "port", DefaultGuotuServer.PORT_DEFAULT ) );
     }
 

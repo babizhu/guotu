@@ -3,6 +3,7 @@ package org.bbz.srxk.guotu.handler.codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import lombok.Data;
+import org.bbz.srxk.guotu.handler.cmd.Cmd;
 
 import java.util.Arrays;
 
@@ -33,7 +34,7 @@ public class MessageContainer{
         return "MessageContainer{" +
                 "head=" + head +
                 ", len=" + len +
-                ", cmdId=" + cmdId +
+                ", cmdId=" + Cmd.fromNum( cmdId ) + "(" + cmdId + ")" +
                 ", data=" + ByteBufUtil.hexDump( data ) +
                 ", checkSum=" + Arrays.toString( checkSum ) +
                 '}';

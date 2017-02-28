@@ -32,6 +32,6 @@ public class ChannelInitializerHandler extends ChannelInitializer<SocketChannel>
 //        ch.pipeline().addLast( new IntProccessHandler3() );
 //        ch.pipeline().addLast( new IntProccessHandler() );
 //        ch.pipeline().addLast( new IntProccessHandler2() );
-        ch.pipeline().addLast( new ProcessHandler() );
+        ch.pipeline().addLast( new ProcessDispatcher() );
     }
 }

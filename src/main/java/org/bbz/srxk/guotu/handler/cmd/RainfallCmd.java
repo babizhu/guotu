@@ -2,6 +2,7 @@ package org.bbz.srxk.guotu.handler.cmd;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import org.bbz.srxk.guotu.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,10 +21,11 @@ import java.util.Date;
  * 服务器收到雨量数据反馈协议：
  * FF 55 88 88 88
  */
-public class RainfallCmd extends AbstractCmd {
+public class RainfallCmd extends AbstractCmd{
 
-    private static final Logger LOG = LoggerFactory.getLogger(RainfallCmd.class);
+    private static final Logger LOG = LoggerFactory.getLogger( RainfallCmd.class );
     private final ChannelHandlerContext ctx;
+
     /**
      * 雨量
      */
@@ -33,52 +35,53 @@ public class RainfallCmd extends AbstractCmd {
      */
     private Date timeStamp;
 
-    public RainfallCmd(ChannelHandlerContext ctx, ByteBuf data) {
-        super(data);
+    public RainfallCmd( ChannelHandlerContext ctx, ByteBuf data){
+        super( data );
         this.ctx = ctx;
     }
 
     @Override
-    public void run() {
+    public ByteBuf run(Client client){
 
+        LOG.debug( client.getClientId() + ":" + toString() );
         ByteBuf response = ctx.alloc().buffer();
-        response.writeByte(0xff);
-        response.writeByte(0x55);
-        response.writeByte(0x88);
-        response.writeByte(0x88);
-        response.writeByte(0x88);
+        response.writeByte( 0xff );
+        response.writeByte( 0x55 );
+        response.writeByte( 0x88 );
+        response.writeByte( 0x88 );
+        response.writeByte( 0x88 );
 
-        ctx.writeAndFlush(response);
+        return response;
     }
 
 
     @Override
-    void parse() {
+    void parse(){
 //        ByteBufUtil.hexDump(data);
-        rainfall = data.getUnsignedShort(4) / 100f;
+        rainfall = data.getUnsignedShort( 4 ) / 100f;
 
         byte[] timeStampByes = new byte[7];
 
 
-        data.getBytes(8, timeStampByes);
+        data.getBytes( 8, timeStampByes );
 
-        this.timeStamp = parseTimeStamp(timeStampByes);
-        LOG.debug(toString());
+        this.timeStamp = parseTimeStamp( timeStampByes );
+
 
     }
 
     @Override
-    public String toString() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public String toString(){
+        SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
         return "RainfallCmd{" +
                 "rainfall=" + rainfall +
-                ", timeStamp=" + formatter.format(timeStamp) +
+                ", timeStamp=" + formatter.format( timeStamp ) +
                 '}';
     }
 
-    private Date parseTimeStamp(byte[] timeStamp) {
+    private Date parseTimeStamp( byte[] timeStamp ){
         Calendar calendar = Calendar.getInstance();
-        calendar.set(timeStamp[3] + 2000, timeStamp[4] - 1, timeStamp[5], timeStamp[0], timeStamp[1], timeStamp[2]);  //年月日  也可以具体到时分秒如calendar.set(2015, 10, 12,11,32,52);
+        calendar.set( timeStamp[3] + 2000, timeStamp[4] - 1, timeStamp[5], timeStamp[0], timeStamp[1], timeStamp[2] );  //年月日  也可以具体到时分秒如calendar.set(2015, 10, 12,11,32,52);
         return calendar.getTime();
     }
 }

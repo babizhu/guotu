@@ -71,7 +71,7 @@ public class DefaultGuotuServer implements IServer{
 //    private final int lengthFieldOffset;
     private InetSocketAddress requestedAddress, listenAddress;
 
-    public DefaultGuotuServer( InetSocketAddress requestedAddress){
+    DefaultGuotuServer( InetSocketAddress requestedAddress ){
         this.requestedAddress = requestedAddress;
 //        this.maxFramesize = maxFrameSize;
 //        lengthFieldOffset = 1;
@@ -129,7 +129,7 @@ public class DefaultGuotuServer implements IServer{
         return new GuotuServerBootstrap( props );
     }
 
-    protected IServer start(){
+    IServer start(){
 
         EventLoopGroup boss = new NioEventLoopGroup(1);
         EventLoopGroup worker = new NioEventLoopGroup();

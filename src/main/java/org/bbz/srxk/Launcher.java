@@ -9,30 +9,28 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- *
  * Created by liulaoye on 17-2-17.
  * Launcher
- *
+ * <p>
  * Launches a new service.
  */
-public class Launcher {
+public class Launcher{
 
-    private static final Logger LOG = LoggerFactory.getLogger(Launcher.class);
+    private static final Logger LOG = LoggerFactory.getLogger( Launcher.class );
 
-       /**
+    /**
      * Starts the server from the command line.
      *
-     * @param args
-     *            Any command line arguments.
+     * @param args Any command line arguments.
      */
-    public static void main(final String... args) {
+    public static void main( final String... args ){
 
-        System.out.println("Beging to running GUOTU server\n");
+        LOG.info( "Beging to running GUOTU server\n" );
 //        System.out.println("About to start server on port: " + port);
-        IServerBootstrap bootstrap = DefaultGuotuServer.bootstrapFromFile("./server.properties");
+        IServerBootstrap bootstrap = DefaultGuotuServer.bootstrapFromFile( "./server.properties" );
 
         final IServer server = bootstrap.start();
-        System.out.println( "Server started at address: " + server.getListenAddress() );
+        LOG.info( "Server started at address: " + server.getListenAddress() );
         System.out.println( "------------------------------------------------------------" );
         System.out.println( "------------------------------------------------------------" );
 

@@ -20,7 +20,7 @@ public class MessageDeCoder extends LengthFieldBasedFrameDecoder{
 //            LENGTH_FIELD_LENGTH = 2;//大包压力测试环境
 
     public MessageDeCoder( int maxFrameLength, int lengthFieldOffset, int lengthFieldLength ){
-        super( maxFrameLength, lengthFieldOffset, lengthFieldLength,LENGTH_ADJUSTMENT,0 );
+        super( maxFrameLength, lengthFieldOffset, lengthFieldLength, LENGTH_ADJUSTMENT, 0 );
     }
 
     public MessageDeCoder(){
@@ -37,8 +37,8 @@ public class MessageDeCoder extends LengthFieldBasedFrameDecoder{
         short len = frame.readUnsignedByte();//真实环境
 //        short len = frame.readShort();//测试环境
         short cmdId = frame.readUnsignedByte();
-        int dataLen = frame.writerIndex() - 2  - frame.readerIndex();//2 for checksum
-        ByteBuf data = frame.slice(frame.readerIndex(),dataLen );
+        int dataLen = frame.writerIndex() - 2 - frame.readerIndex();//2 for checksum
+        ByteBuf data = frame.slice( frame.readerIndex(), dataLen );
 //        frame.skipBytes( dataLen + 7 );//7 from tiemstamp
         byte[] checkSum = new byte[2];//2 for checksum
         frame.readBytes( checkSum );
