@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by liukun on 2017/2/25.
@@ -52,11 +53,17 @@ public class RainfallCmd extends AbstractCmd{
         response.writeByte( 0x88 );
 
         if( this.rainfall > 0 ){
-            response.writeInt( 0 );
-            response.writeByte( 0xdd );
-            response.writeShort( 1 );
-            response.writeByte( 0x00 );
-            response.writeByte( 0x01 );
+            ctx.executor().schedule( () -> {
+                final ByteBuf buffer = ctx.alloc().buffer();
+                buffer.writeInt( 0 );
+                buffer.writeByte( 0xdd );
+                buffer.writeShort( 1 );
+                buffer.writeByte( 0x00 );
+                buffer.writeByte( 0x01 );
+                ctx.writeAndFlush( buffer );
+
+            },20, TimeUnit.MILLISECONDS );
+
         }
         return response;
     }
