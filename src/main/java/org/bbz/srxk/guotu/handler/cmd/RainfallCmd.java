@@ -3,6 +3,7 @@ package org.bbz.srxk.guotu.handler.cmd;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.bbz.srxk.guotu.client.Client;
+import org.bbz.srxk.guotu.db.RainFallDataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +37,15 @@ public class RainfallCmd extends AbstractCmd{
      */
     private Date timeStamp;
 
-    public RainfallCmd( ChannelHandlerContext ctx, ByteBuf data){
+    public RainfallCmd( ChannelHandlerContext ctx, ByteBuf data ){
         super( data );
         this.ctx = ctx;
     }
 
     @Override
-    public ByteBuf run(Client client){
+    public ByteBuf run( Client client ){
+
+        RainFallDataProvider.INSTANCE.add( rainfall, client.getClientId(), timeStamp.getTime() );
 
         LOG.debug( client.getClientId() + ":" + toString() );
         ByteBuf response = ctx.alloc().buffer();
@@ -52,7 +55,7 @@ public class RainfallCmd extends AbstractCmd{
         response.writeByte( 0x88 );
         response.writeByte( 0x88 );
 
-        if( this.rainfall > 0 ){
+        if( this.rainfall > 0 ) {
             ctx.executor().schedule( () -> {
                 final ByteBuf buffer = ctx.alloc().buffer();
                 buffer.writeInt( 0 );
@@ -62,7 +65,7 @@ public class RainfallCmd extends AbstractCmd{
                 buffer.writeByte( 0x01 );
                 ctx.writeAndFlush( buffer );
 
-            },20, TimeUnit.MILLISECONDS );
+            }, 20, TimeUnit.MILLISECONDS );
 
         }
         return response;
@@ -95,7 +98,7 @@ public class RainfallCmd extends AbstractCmd{
 
     private Date parseTimeStamp( byte[] timeStamp ){
         Calendar calendar = Calendar.getInstance();
-        calendar.set( timeStamp[3] + 2000, timeStamp[4] - 1, timeStamp[5], timeStamp[0], timeStamp[1], timeStamp[2] );  //年月日  也可以具体到时分秒如calendar.set(2015, 10, 12,11,32,52);
+        calendar.set( timeStamp[3] + 2000, timeStamp[4] -1, timeStamp[5], timeStamp[0], timeStamp[1], timeStamp[2] );  //年月日  也可以具体到时分秒如calendar.set(2015, 10, 12,11,32,52);
         return calendar.getTime();
     }
 }

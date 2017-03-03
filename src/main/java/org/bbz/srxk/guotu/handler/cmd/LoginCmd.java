@@ -2,6 +2,7 @@ package org.bbz.srxk.guotu.handler.cmd;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.AttributeKey;
 import org.bbz.srxk.guotu.client.Client;
 import org.bbz.srxk.guotu.client.ClientsInfo;
 import org.slf4j.Logger;
@@ -17,6 +18,9 @@ import java.util.Date;
 public class LoginCmd extends AbstractCmd{
 
     private static final Logger LOG = LoggerFactory.getLogger( LoginCmd.class );
+    public static final AttributeKey<Integer> ATTR_ID_KEY = AttributeKey.valueOf( "clentId" );
+
+
     private final ChannelHandlerContext ctx;
 
     private int clientId;
@@ -29,6 +33,13 @@ public class LoginCmd extends AbstractCmd{
     @Override
     public ByteBuf run( Client client ){
 
+        if( ctx.channel().hasAttr( ATTR_ID_KEY ) ) {
+            LOG.error( "已登录用户重复登录:" +  ctx.channel().attr( ATTR_ID_KEY ) + ", ip 为" + ctx.channel().remoteAddress());
+
+        } else {
+
+            ctx.channel().attr( ATTR_ID_KEY ).set( clientId );
+        }
         ClientsInfo.INSTANCE.add( clientId, ctx );
         return buildServerTime() ;
     }

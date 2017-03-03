@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.Attribute;
 import org.bbz.srxk.guotu.client.Client;
 import org.bbz.srxk.guotu.client.ClientsInfo;
 import org.bbz.srxk.guotu.handler.cmd.Cmd;
@@ -13,17 +14,33 @@ import org.bbz.srxk.guotu.handler.codec.MessageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
+import static org.bbz.srxk.guotu.handler.cmd.LoginCmd.ATTR_ID_KEY;
+
 /**
  * Created by liulaoye on 17-2-20.
  * 真正的业务核心处理
  */
 public class ProcessDispatcher extends SimpleChannelInboundHandler<MessageContainer>{
-    private static final Logger LOG = LoggerFactory.getLogger( ProcessDispatcher.class );
+    public static final Logger LOG = LoggerFactory.getLogger( ProcessDispatcher.class );
 
+    //    Attribute<Integer> ATTR_ID_KEY = ctx.attr(NETTY_CHANNEL_KEY);
+
+    @Override
+    public void channelActive( ChannelHandlerContext ctx ) throws Exception{
+
+
+    }
 
     @Override
     protected void channelRead0( ChannelHandlerContext ctx, MessageContainer container ) throws Exception{
-        dispacher( container, ctx );
+        try {
+
+            dispacher( container, ctx );
+        } finally {
+            container.getData().release();
+        }
     }
 
 //    @Override
@@ -48,19 +65,32 @@ public class ProcessDispatcher extends SimpleChannelInboundHandler<MessageContai
      * 对输入命令进行统一调度
      *
      * @param container 命令容器
-     * @param ctx   ctx
+     * @param ctx       ctx
      */
     private void dispacher( MessageContainer container, ChannelHandlerContext ctx ) throws InterruptedException{
 
         LOG.debug( container.toString() );
 
+        final Client client = getClientByCtx( ctx );
+
+        if( !cmdIsValid( container ) ) {
+            if( client != null ) {
+                ClientsInfo.INSTANCE.remove( client.getClientId() );
+            } else {
+                ctx.close();
+            }
+
+            LOG.debug( "head or checksum error: head is " + container.getHead() + ",checksum is " + Arrays.toString( container.getCheckSum() ) );
+            return;
+        }
+
         final short cmdId = container.getCmdId();
         Cmd cmd = Cmd.fromNum( cmdId );
-        final ClientsInfo clientsInfo = ClientsInfo.INSTANCE;
-        final Client client = clientsInfo.getClient( ctx );
+
+
         if( client == null && cmd != Cmd.LOGIN_CMD ) {
-            LOG.debug( "用户未登录，上传的信息为: " + container.toString() );
-            clientsInfo.remove( ctx );
+            LOG.debug( "用户未登录，请求命令为: " + container.toString() );
+//            clientsInfo.remove( ctx );
             return;
         }
 
@@ -86,13 +116,43 @@ public class ProcessDispatcher extends SimpleChannelInboundHandler<MessageContai
 
         }
 
-        LOG.debug( "reqeust:" + container + ", response:" + ByteBufUtil.hexDump( response ));
-        LOG.debug( "===========================================================================");
+        LOG.debug( "reqeust:" + container + ", response:" + ByteBufUtil.hexDump( response ) );
+        LOG.debug( "===========================================================================" );
 
-        if( response.writerIndex() > 0){
+        if( response.writerIndex() > 0 ) {
             ctx.writeAndFlush( response );
 
         }
+
+    }
+
+    /**
+     * 获取此链接关联的clientId
+     *
+     * @param ctx ctx
+     * @return  client
+     */
+    private Client getClientByCtx( ChannelHandlerContext ctx ){
+        if( ctx.channel().hasAttr( ATTR_ID_KEY ) ) {
+            final Attribute<Integer> attr = ctx.channel().attr( ATTR_ID_KEY );
+            if( attr != null ) {
+                ClientsInfo.INSTANCE.getClient( attr.get() );
+
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 检测命令的有效性，包括
+     * 包头
+     * 验证码
+     *
+     * @param container MessageContainer
+     * @return valid for true
+     */
+    private boolean cmdIsValid( MessageContainer container ){
+        return container.getHead() == (byte) 0xff;
     }
 
 

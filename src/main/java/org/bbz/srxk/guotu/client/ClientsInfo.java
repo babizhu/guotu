@@ -11,21 +11,31 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public enum ClientsInfo{
     INSTANCE;
-    private Map<ChannelHandlerContext,Client> clients = new ConcurrentHashMap<>();
+    private Map<Integer,Client> clients = new ConcurrentHashMap<>();
 
 
     public void add( int clientId, ChannelHandlerContext ctx ){
         final Client client = new Client( clientId, ctx );
-        clients.put( ctx,client );
+        clients.put( clientId,client );
     }
 
-    public Client getClient( ChannelHandlerContext ctx ){
-        return clients.get( ctx );
+    public Client getClient( int clientId ){
+        return clients.get( clientId );
     }
-    public Client remove( ChannelHandlerContext ctx ){
-        final Client removeClient = clients.remove( ctx );
-        ctx.close();
+
+    /**
+     *
+     * @param clientId
+     * @return
+     */
+    public Client remove( int clientId ){
+        final Client removeClient = clients.remove( clientId );
+        if( removeClient != null ){
+            //TODO 额外的操作
+        }
+        removeClient.getCtx().close();
 //        ctx.channel().close();
         return removeClient;
     }
+
 }
