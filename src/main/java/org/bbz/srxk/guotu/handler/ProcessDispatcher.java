@@ -89,7 +89,7 @@ public class ProcessDispatcher extends SimpleChannelInboundHandler<MessageContai
 
 
         if( client == null && cmd != Cmd.LOGIN_CMD ) {
-            LOG.debug( "用户未登录，请求命令为: " + container.toString() );
+            LOG.debug( "user NOT login, the cmd is: " + container.toString() );
 //            clientsInfo.remove( ctx );
             return;
         }
@@ -136,7 +136,7 @@ public class ProcessDispatcher extends SimpleChannelInboundHandler<MessageContai
         if( ctx.channel().hasAttr( ATTR_ID_KEY ) ) {
             final Attribute<Integer> attr = ctx.channel().attr( ATTR_ID_KEY );
             if( attr != null ) {
-                ClientsInfo.INSTANCE.getClient( attr.get() );
+                return ClientsInfo.INSTANCE.getClient( attr.get() );
 
             }
         }
