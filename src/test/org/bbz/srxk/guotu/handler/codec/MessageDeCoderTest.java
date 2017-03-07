@@ -26,6 +26,7 @@ import static org.bbz.srxk.guotu.server.DefaultGuotuServer.PORT_DEFAULT;
 public class MessageDeCoderTest{
 
     @Test
+
     public void testFramesDecoded(){
         int cmdId = 109;
         ByteBuf buf = Unpooled.buffer();
