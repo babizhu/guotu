@@ -8,6 +8,7 @@ import io.netty.util.Attribute;
 import org.bbz.srxk.guotu.client.Client;
 import org.bbz.srxk.guotu.client.ClientsInfo;
 import org.bbz.srxk.guotu.handler.cmd.Cmd;
+import org.bbz.srxk.guotu.handler.cmd.CtrlClientCmd;
 import org.bbz.srxk.guotu.handler.cmd.LoginCmd;
 import org.bbz.srxk.guotu.handler.cmd.RainfallCmd;
 import org.bbz.srxk.guotu.handler.codec.MessageContainer;
@@ -95,13 +96,16 @@ public class ProcessDispatcher extends SimpleChannelInboundHandler<MessageContai
         }
 
         Thread.sleep( 20 );//It is not a joke，前端说后台回复太快，反应不过来需要降速 :-(
-        ByteBuf response;
+        ByteBuf response = null;
         switch( cmd ) {
             case LOGIN_CMD:
                 response = new LoginCmd( ctx, container.getData() ).run( null );
                 break;
-            case RAINFALL:
+            case RAINFALL_CMD:
                 response = new RainfallCmd( ctx, container.getData() ).run( client );
+                break;
+            case CTRL_CMD:
+                new CtrlClientCmd( ctx, container.getData() ).run( client );
                 break;
             default:
 
@@ -116,12 +120,12 @@ public class ProcessDispatcher extends SimpleChannelInboundHandler<MessageContai
 
         }
 
-        LOG.debug( "reqeust:" + container + ", response:" + ByteBufUtil.hexDump( response ) );
+        LOG.debug( "reqeust:" + container + ", response:" +
+                (response == null ? "" : ByteBufUtil.hexDump( response )) );
         LOG.debug( "===========================================================================" );
 
-        if( response.writerIndex() > 0 ) {
+        if( response != null ) {
             ctx.writeAndFlush( response );
-
         }
 
     }
@@ -130,7 +134,7 @@ public class ProcessDispatcher extends SimpleChannelInboundHandler<MessageContai
      * 获取此链接关联的clientId
      *
      * @param ctx ctx
-     * @return  client
+     * @return client
      */
     private Client getClientByCtx( ChannelHandlerContext ctx ){
         if( ctx.channel().hasAttr( ATTR_ID_KEY ) ) {

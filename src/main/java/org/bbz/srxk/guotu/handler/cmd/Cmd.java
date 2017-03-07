@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public enum Cmd{
     LOGIN_CMD( 2 ),
-    RAINFALL( 1 ), UNDEFINED( 0 );
+    RAINFALL_CMD( 1 ), UNDEFINED_CMD( 0 ),CTRL_CMD(3);
 
     private final int number;
 
@@ -36,7 +36,7 @@ public enum Cmd{
     public static Cmd fromNum( int n ){
         final Cmd cmd = numToEnum.get( n );
         if( cmd == null){
-            return Cmd.UNDEFINED;
+            return Cmd.UNDEFINED_CMD;
         }
         return cmd;
     }

@@ -34,6 +34,11 @@ public class Launcher{
         System.out.println( "------------------------------------------------------------" );
         System.out.println( "------------------------------------------------------------" );
 
+
+        new Thread( () -> {
+
+        } ).start();
+
     }
 //
 //    private static void printHelp(final Options options,
