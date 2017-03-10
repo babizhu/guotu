@@ -3,7 +3,7 @@ package org.bbz.srxk.guotu.handler.cmd;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.bbz.srxk.guotu.client.Client;
-import org.bbz.srxk.guotu.client.ClientsInfo;
+import org.bbz.srxk.guotu.client.HardwareClientsInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,7 @@ public class CtrlClientCmd extends AbstractCmd{
 
     @Override
     public ByteBuf run( Client client ){
-        ClientsInfo.INSTANCE.writeResponse( client.getClientId(), result );
+        HardwareClientsInfo.INSTANCE.writeResponse( client.getClientId(), result );
         return null;
     }
 

@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.bbz.srxk.Launcher;
-import org.bbz.srxk.guotu.client.ClientsInfo;
+import org.bbz.srxk.guotu.client.HardwareClientsInfo;
 import org.bbz.srxk.guotu.handler.cmd.Cmd;
 import org.junit.Test;
 
@@ -45,7 +45,7 @@ public class WebClientResponseTest extends BaseClient{
 
             final int clientId =  19;
             System.out.println( "模拟服务器收到了web操作,发送控制指令给客户端，参数为999");
-            final ArrayBlockingQueue<Object> queue = (ArrayBlockingQueue) ClientsInfo.INSTANCE.sendCtrlCmd( clientId,  "999" );
+            final ArrayBlockingQueue<Object> queue = (ArrayBlockingQueue) HardwareClientsInfo.INSTANCE.sendCtrlCmd( clientId,  "999" );
             if( queue != null ) {
                 try {
 
@@ -78,6 +78,7 @@ public class WebClientResponseTest extends BaseClient{
                 int result = m.readInt();
                 if( result == 999){
                     System.out.println( "模拟的硬件客户端收到了从服务器发送的控制指令");
+                    //doSomething.......
                     ctx.writeAndFlush( buildCmd( ctx.alloc().buffer(),Cmd.CTRL_CMD) );//返回给服务器控制指令专用包
                 }
             }

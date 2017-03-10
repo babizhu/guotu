@@ -6,7 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.Attribute;
 import org.bbz.srxk.guotu.client.Client;
-import org.bbz.srxk.guotu.client.ClientsInfo;
+import org.bbz.srxk.guotu.client.HardwareClientsInfo;
 import org.bbz.srxk.guotu.handler.cmd.Cmd;
 import org.bbz.srxk.guotu.handler.cmd.CtrlClientCmd;
 import org.bbz.srxk.guotu.handler.cmd.LoginCmd;
@@ -76,7 +76,7 @@ public class ProcessDispatcher extends SimpleChannelInboundHandler<MessageContai
 
         if( !cmdIsValid( container ) ) {
             if( client != null ) {
-                ClientsInfo.INSTANCE.remove( client.getClientId() );
+                HardwareClientsInfo.INSTANCE.remove( client.getClientId() );
             } else {
                 ctx.close();
             }
@@ -140,7 +140,7 @@ public class ProcessDispatcher extends SimpleChannelInboundHandler<MessageContai
         if( ctx.channel().hasAttr( ATTR_ID_KEY ) ) {
             final Attribute<Integer> attr = ctx.channel().attr( ATTR_ID_KEY );
             if( attr != null ) {
-                return ClientsInfo.INSTANCE.getClient( attr.get() );
+                return HardwareClientsInfo.INSTANCE.getClient( attr.get() );
 
             }
         }

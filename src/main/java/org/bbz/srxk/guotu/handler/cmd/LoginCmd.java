@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
 import org.bbz.srxk.guotu.client.Client;
-import org.bbz.srxk.guotu.client.ClientsInfo;
+import org.bbz.srxk.guotu.client.HardwareClientsInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public class LoginCmd extends AbstractCmd{
 
             ctx.channel().attr( ATTR_ID_KEY ).set( clientId );
         }
-        ClientsInfo.INSTANCE.add( clientId, ctx );
+        HardwareClientsInfo.INSTANCE.add( clientId, ctx );
         return buildServerTime() ;
     }
 

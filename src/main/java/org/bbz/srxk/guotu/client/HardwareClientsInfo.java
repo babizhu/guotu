@@ -11,20 +11,26 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by liulaoye on 17-2-27.
- * online clients 管理
+ * online hardwareClients 管理
  */
-public enum ClientsInfo{
+public enum HardwareClientsInfo{
     INSTANCE;
-    private Map<Integer, Client> clients = new ConcurrentHashMap<>();
+    private Map<Integer, Client> hardwareClients = new ConcurrentHashMap<>();
+
+    /**
+     * Integer is clientId,
+     * 由于涉及到此变量的函数全部加上了synchronized，所以这里不考虑采用ConcurrentHashMap
+     */
+    private Map<Integer, Queue<Object>> responseMap = new HashMap<>();
 
 
     public void add( int clientId, ChannelHandlerContext ctx ){
         final Client client = new Client( clientId, ctx );
-        clients.put( clientId, client );
+        hardwareClients.put( clientId, client );
     }
 
     public Client getClient( int clientId ){
-        return clients.get( clientId );
+        return hardwareClients.get( clientId );
     }
 
     /**
@@ -32,7 +38,7 @@ public enum ClientsInfo{
      * @return
      */
     public Client remove( int clientId ){
-        final Client removeClient = clients.remove( clientId );
+        final Client removeClient = hardwareClients.remove( clientId );
         if( removeClient != null ) {
             if( responseMap.containsKey( removeClient.getCtx() ) ) {
                 responseMap.remove( removeClient.getCtx() );
@@ -43,7 +49,6 @@ public enum ClientsInfo{
     }
 
 
-    private Map<Integer, Queue<Object>> responseMap = new HashMap<>();//Integer is clientId
 
     //    public void waitResult(String ctx){
 //        final Queue<Object> queue = responseMap.get( ctx );

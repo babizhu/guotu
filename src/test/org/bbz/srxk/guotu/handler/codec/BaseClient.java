@@ -31,6 +31,7 @@ public class BaseClient{
             b.group( workerGroup ); // (2)
             b.channel( NioSocketChannel.class ); // (3)
             b.option( ChannelOption.SO_KEEPALIVE, true ); // (4)
+            b.option( ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000);
             b.handler( new ChannelInitializer<SocketChannel>(){
                 @Override
                 public void initChannel( SocketChannel ch ) throws Exception{
