@@ -24,20 +24,13 @@ import static org.bbz.srxk.guotu.handler.cmd.LoginCmd.ATTR_ID_KEY;
  * 真正的业务核心处理
  */
 public class ProcessDispatcher extends SimpleChannelInboundHandler<MessageContainer>{
-    public static final Logger LOG = LoggerFactory.getLogger( ProcessDispatcher.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ProcessDispatcher.class );
 
     //    Attribute<Integer> ATTR_ID_KEY = ctx.attr(NETTY_CHANNEL_KEY);
 
     @Override
-    public void channelActive( ChannelHandlerContext ctx ) throws Exception{
-
-
-    }
-
-    @Override
     protected void channelRead0( ChannelHandlerContext ctx, MessageContainer container ) throws Exception{
         try {
-
             dispacher( container, ctx );
         } finally {
             container.getData().release();
@@ -131,7 +124,7 @@ public class ProcessDispatcher extends SimpleChannelInboundHandler<MessageContai
     }
 
     /**
-     * 获取此链接关联的clientId
+     * 获取此链接关联的client,如果没有则返回null
      *
      * @param ctx ctx
      * @return client

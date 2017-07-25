@@ -18,11 +18,11 @@ import static io.netty.util.internal.StringUtil.NEWLINE;
  * Created by liulaoye on 17-3-7.
  * 一个用于测试服务器的client类
  */
-public class BaseClient{
+class BaseClient{
 
-    private static final byte HEAD = (byte) 0XFF;
+    protected static final byte HEAD = (byte) 0XFF;
 
-    public void connect( String host, int port, ChannelInboundHandlerAdapter handlerAdapter ){
+    void connect( String host, int port, ChannelInboundHandlerAdapter handlerAdapter ){
 
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -50,20 +50,20 @@ public class BaseClient{
 
 
     /**
-     * 格式化客户端反馈的信息，方便查看
+     * 格式化客户端反馈的信息，方便查看，来源netty源代码
      *
-     * @param ctx
-     * @param eventName
-     * @param msg
+     * @param ctx           ctx
+     * @param eventName     eventName
+     * @param msg           msg
      * @return
+     *                      方便查看的字符串
      */
-    public String formatByteBuf( ChannelHandlerContext ctx, String eventName, ByteBuf msg ){
+    @SuppressWarnings("SameParameterValue")
+    String formatByteBuf( ChannelHandlerContext ctx, String eventName, ByteBuf msg ){
         String chStr = ctx.channel().toString();
         int length = msg.readableBytes();
         if( length == 0 ) {
-            StringBuilder buf = new StringBuilder( chStr.length() + 1 + eventName.length() + 4 );
-            buf.append( chStr ).append( ' ' ).append( eventName ).append( ": 0B" );
-            return buf.toString();
+            return chStr + ' ' + eventName + ": 0B";
         } else {
             int rows = length / 16 + (length % 15 == 0 ? 0 : 1) + 4;
             StringBuilder buf = new StringBuilder( chStr.length() + 1 + eventName.length() + 2 + 10 + 1 + 2 + rows * 80 );
@@ -78,9 +78,10 @@ public class BaseClient{
     /**
      * 构建各种命令包
      *
-     * @param buffer
-     * @param cmd
+     * @param buffer        要填充的buffer
+     * @param cmd           命令枚举
      * @return
+     *                      填充好的buffer
      */
     ByteBuf buildCmd( ByteBuf buffer, Cmd cmd ){
         buffer.writeByte( HEAD );
@@ -116,7 +117,7 @@ public class BaseClient{
         buffer.writeInt( -111 );//模拟客户端相应服务器的控制指令，1成功，0失败
     }
 
-    void buildRainfallCmd( ByteBuf buffer ){
+    private void buildRainfallCmd( ByteBuf buffer ){
         buffer.writeByte( 0x03 );
         buffer.writeByte( 0x04 );
         buffer.writeByte( 0x00 );
@@ -125,7 +126,7 @@ public class BaseClient{
         buffer.writeByte( 0xfa );
         buffer.writeByte( 0x33 );
 
-        /**********************时间戳*************************/
+        /* 时间戳 */
         Calendar cal = Calendar.getInstance();
         cal.setTime( new Date() );
         buffer.writeByte( cal.get( Calendar.HOUR_OF_DAY ) );//时
@@ -138,11 +139,11 @@ public class BaseClient{
         int dayOfWeek = cal.get( Calendar.DAY_OF_WEEK );
         dayOfWeek = dayOfWeek == 1 ? 7 : dayOfWeek - 1;
         buffer.writeByte( dayOfWeek );//星期
-        /**********************时间戳*************************/
+        /* 时间戳 */
 
     }
 
-    void buildLoginCmd( ByteBuf buffer ){
+    private void buildLoginCmd( ByteBuf buffer ){
         byte byte1 = (byte) 0x88;
         byte byte2 = (byte) 0x99;
         buffer.writeByte( byte1 );

@@ -4,7 +4,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import org.bbz.srxk.guotu.handler.codec.MessageDecoder;
+import org.bbz.srxk.guotu.handler.codec.GongdiMessageDecoder;
 import org.bbz.srxk.guotu.server.DefaultGuotuServer;
 
 /**
@@ -26,12 +26,13 @@ public class ChannelInitializerHandler extends ChannelInitializer<SocketChannel>
         ch.pipeline().addLast( new LoggingHandler( LogLevel.INFO ) );
 
 //        ch.pipeline().addLast( new MessageDeCoder1() );//测试用
-        ch.pipeline().addLast( new MessageDecoder() );//正式用
+//        ch.pipeline().addLast( new MessageDecoder() );//国土项目正式用
+        ch.pipeline().addLast( new GongdiMessageDecoder() );//智慧工地正式用
 
 //        ch.pipeline().addLast( new StringEncoder(   ) );
 //        ch.pipeline().addLast( new IntProccessHandler3() );
 //        ch.pipeline().addLast( new IntProccessHandler() );
 //        ch.pipeline().addLast( new IntProccessHandler2() );
-        ch.pipeline().addLast( new ProcessDispatcher() );
+        ch.pipeline().addLast( new GongdiProcessDispatcher() );
     }
 }

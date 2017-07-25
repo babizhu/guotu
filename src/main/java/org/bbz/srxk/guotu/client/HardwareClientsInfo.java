@@ -34,28 +34,19 @@ public enum HardwareClientsInfo{
     }
 
     /**
-     * @param clientId
-     * @return
+     * @param clientId clientId
      */
-    public Client remove( int clientId ){
+    public void remove( int clientId ){
         final Client removeClient = hardwareClients.remove( clientId );
         if( removeClient != null ) {
-            if( responseMap.containsKey( removeClient.getCtx() ) ) {
-                responseMap.remove( removeClient.getCtx() );
-            }
+
+            responseMap.remove( clientId );
+
+            removeClient.getCtx().close();
         }
-        removeClient.getCtx().close();
-        return removeClient;
+
     }
 
-
-
-    //    public void waitResult(String ctx){
-//        final Queue<Object> queue = responseMap.get( ctx );
-//
-//
-//    }
-//
     synchronized
     public void writeResponse( int clientId, Object result ){
         final Queue<Object> queue = responseMap.get( clientId );
@@ -66,10 +57,12 @@ public enum HardwareClientsInfo{
 
     /**
      * 向硬件客户端发送控制指令
-     * @param clientId      客户端id
-     * @param args          命令参数
-     * @return              阻塞队列
+     *
+     * @param clientId  硬件客户端id（指明控制指令将发送给哪个硬件）
+     * @param args      命令参数
+     * @return          阻塞队列
      */
+    @SuppressWarnings("SameParameterValue")
     synchronized
     public Queue<Object> sendCtrlCmd( int clientId, String args ){
 
@@ -79,7 +72,7 @@ public enum HardwareClientsInfo{
         }
         final ChannelHandlerContext ctx = client.getCtx();
 
-        doSendCtrlCmd(  ctx,args );
+        doSendCtrlCmd( ctx, args );
         if( responseMap.containsKey( clientId ) ) {
             return responseMap.get( clientId );
         } else {
@@ -89,7 +82,7 @@ public enum HardwareClientsInfo{
         }
     }
 
-    private void doSendCtrlCmd( ChannelHandlerContext ctx,  String args ){
+    private void doSendCtrlCmd( ChannelHandlerContext ctx, String args ){
         final ByteBuf buffer = ctx.alloc().buffer();
         buffer.writeInt( Integer.parseInt( args ) );
         ctx.writeAndFlush( buffer );

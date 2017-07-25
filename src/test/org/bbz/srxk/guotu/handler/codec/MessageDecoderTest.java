@@ -8,7 +8,7 @@ import org.junit.Test;
 
 /**
  * Created by liulaoye on 17-2-20.
- * test
+ * 学习EmbeddedChannel的用法
  */
 public class MessageDecoderTest{
 

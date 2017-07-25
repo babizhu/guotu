@@ -14,10 +14,11 @@ import static org.bbz.srxk.guotu.server.DefaultGuotuServer.PORT_DEFAULT;
 
 /**
  * Created by liulaoye on 17-2-20.
+ * <p>
  * 模拟一个web客户端向雨量采集器客户端发送控制指令，数据流向如下：
  * web -> this ->client
  * client -> this -> web
- * <p>
+ * </p>
  * 考虑这个往返的过程比较复杂，要多进行测试
  */
 public class WebClientResponseTest extends BaseClient{
@@ -36,7 +37,7 @@ public class WebClientResponseTest extends BaseClient{
      */
     private void startServer(){
         new Thread( () -> {
-            new Launcher().main( new String[]{} );
+            Launcher.main();
             try {
                 Thread.sleep( 1000 );//等待客户端正常登录
             } catch( InterruptedException e ) {
@@ -44,8 +45,8 @@ public class WebClientResponseTest extends BaseClient{
             }
 
             final int clientId =  19;
-            System.out.println( "模拟服务器收到了web操作,发送控制指令给客户端，参数为999");
-            final ArrayBlockingQueue<Object> queue = (ArrayBlockingQueue) HardwareClientsInfo.INSTANCE.sendCtrlCmd( clientId,  "999" );
+            System.out.println( "模拟web服务器收到了客户端网页发送的操作指令,发送控制指令给客户端，参数为999");
+            final ArrayBlockingQueue queue = (ArrayBlockingQueue) HardwareClientsInfo.INSTANCE.sendCtrlCmd( clientId,  "999" );
             if( queue != null ) {
                 try {
 
@@ -65,10 +66,7 @@ public class WebClientResponseTest extends BaseClient{
 
         @Override
         public void channelActive( ChannelHandlerContext ctx ){
-            System.out.println( "TestHandler.channelActive" );
-
             ctx.writeAndFlush( buildCmd( ctx.alloc().buffer(), Cmd.LOGIN_CMD ) );
-
         }
 
         @Override
@@ -83,6 +81,7 @@ public class WebClientResponseTest extends BaseClient{
                 }
             }
 
+//            从中可以听到（联想）到《三寸天堂》《大雨将至》《海角七号》《月光》张信哲的《白月光》《信仰》翻唱 松隆子的 梦的点滴，石进的《街道的寂寞》。。《假如爱有天意》。。陈琳的《雨夜》等一些悲伤音乐
 
         }
 

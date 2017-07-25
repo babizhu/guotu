@@ -8,20 +8,20 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
  * Created by liulaoye on 17-2-20.
  * 根据包长度来解包
  */
-public class MessageDecoder extends LengthFieldBasedFrameDecoder{
+public class GongdiMessageDecoder extends LengthFieldBasedFrameDecoder{
 //    private static final Logger LOG = LoggerFactory.getLogger( MessageDecoder.class );
 
-    private final static int MAX_FRAME_LENGTH = 8192,
+    private final static int MAX_FRAME_LENGTH = 1024,
             LENGTH_FILED_OFFSET = 1,
             LENGTH_ADJUSTMENT = -1,
             LENGTH_FIELD_LENGTH = 1;//真实环境
 //            LENGTH_FIELD_LENGTH = 2;//大包压力测试环境
 
-    public MessageDecoder( int maxFrameLength, int lengthFieldOffset, int lengthFieldLength ){
+    public GongdiMessageDecoder( int maxFrameLength, int lengthFieldOffset, int lengthFieldLength ){
         super( maxFrameLength, lengthFieldOffset, lengthFieldLength, LENGTH_ADJUSTMENT, 0 );
     }
 
-    public MessageDecoder(){
+    public GongdiMessageDecoder(){
         this( MAX_FRAME_LENGTH, LENGTH_FILED_OFFSET, LENGTH_FIELD_LENGTH );
     }
 
@@ -33,15 +33,12 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder{
         }
         byte head = frame.readByte();
         short len = frame.readUnsignedByte();//真实环境
-//        short len = frame.readShort();//测试环境
-        short cmdId = frame.readUnsignedByte();
-        int dataLen = frame.writerIndex() - 2 - frame.readerIndex();//2 for checksum
+        short cmdId = frame.getUnsignedByte( 7 );
+        int dataLen = frame.writerIndex()  - frame.readerIndex();//2 for checksum
         ByteBuf data = frame.slice( frame.readerIndex(), dataLen );
-//        frame.skipBytes( dataLen + 7 );//7 from tiemstamp
-        byte[] checkSum = new byte[2];//2 for checksum
-        frame.readBytes( checkSum );
 
-        return new MessageContainer( head, len, cmdId, data, checkSum );
+
+        return new GongdiMessageContainer( head, len, cmdId, data);
 //        return new String(frame.getInt( 2 ) + "");
 //        return frame;
     }

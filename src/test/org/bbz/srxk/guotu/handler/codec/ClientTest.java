@@ -40,8 +40,6 @@ import static org.bbz.srxk.guotu.server.DefaultGuotuServer.PORT_DEFAULT;
  */
 public class ClientTest extends BaseClient{
 
-
-
     @Test
     public void connctTest() throws Exception{
         String host = "localhost";
@@ -55,7 +53,6 @@ public class ClientTest extends BaseClient{
 
         @Override
         public void channelActive( ChannelHandlerContext ctx ){
-            System.out.println( "TestHandler.channelActive" );
             ctx.writeAndFlush( buildCmd( ctx.alloc().buffer(), Cmd.UNDEFINED_CMD ) );
             ctx.writeAndFlush( buildCmd( ctx.alloc().buffer(), Cmd.LOGIN_CMD ) );
             ctx.writeAndFlush( buildCmd( ctx.alloc().buffer(), Cmd.RAINFALL_CMD ) );
