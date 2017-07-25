@@ -59,13 +59,7 @@ public class DefaultGuotuServer implements IServer{
      * Keep track of all channels created by this  server for later shutdown when the proxy is stopped.
      */
     private final ChannelGroup allChannels = new DefaultChannelGroup( proxyAlias, GlobalEventExecutor.INSTANCE );
-    private final Thread jvmShutdownHook = new Thread( new Runnable(){
-
-        @Override
-        public void run(){
-            abort();
-        }
-    }, "GUOTO-SERVER-JVM-shutdown-hook" );
+    private final Thread jvmShutdownHook = new Thread(() -> abort(), "GUOTO-SERVER-JVM-shutdown-hook" );
 
 //    private final int maxFramesize;
 //    private final int lengthFieldOffset;
