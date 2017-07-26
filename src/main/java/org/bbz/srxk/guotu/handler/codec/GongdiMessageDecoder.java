@@ -11,7 +11,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 public class GongdiMessageDecoder extends LengthFieldBasedFrameDecoder{
 //    private static final Logger LOG = LoggerFactory.getLogger( MessageDecoder.class );
 
-    private final static int MAX_FRAME_LENGTH = 1024,
+    private final static int MAX_FRAME_LENGTH = 50,
             LENGTH_FILED_OFFSET = 1,
             LENGTH_ADJUSTMENT = -1,
             LENGTH_FIELD_LENGTH = 1;//真实环境
@@ -38,10 +38,15 @@ public class GongdiMessageDecoder extends LengthFieldBasedFrameDecoder{
         ByteBuf data = frame.slice( frame.readerIndex(), dataLen );
 
 
+
         return new GongdiMessageContainer( head, len, cmdId, data);
 //        return new String(frame.getInt( 2 ) + "");
 //        return frame;
     }
 
-
+    @Override
+    public void exceptionCaught( ChannelHandlerContext ctx, Throwable cause ) throws Exception{
+        super.exceptionCaught( ctx, cause );
+        ctx.close();
+    }
 }

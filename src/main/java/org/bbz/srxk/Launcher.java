@@ -35,9 +35,6 @@ public class Launcher{
         System.out.println( "------------------------------------------------------------" );
 
 
-        new Thread( () -> {
-
-        } ).start();
 
     }
 

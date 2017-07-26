@@ -13,8 +13,8 @@ public class GongdiMessageDecoderTest extends BaseClient{
 
     @Test
     public void connctTest() throws Exception{
-        String host = "localhost";
-//        String host = "120.77.222.248";
+//        String host = "localhost";
+        String host = "121.43.182.176";
 
         org.bbz.srxk.guotu.handler.codec.GongdiMessageDecoderTest.TestHandler handlerAdapter = new org.bbz.srxk.guotu.handler.codec.GongdiMessageDecoderTest.TestHandler();
         new ClientTest().connect( host, PORT_DEFAULT, handlerAdapter );
@@ -32,10 +32,11 @@ public class GongdiMessageDecoderTest extends BaseClient{
 
         @Override
         public void channelActive( ChannelHandlerContext ctx ){
-            ctx.writeAndFlush( buildCmd( ctx.alloc().buffer(), Cmd.ENTER ) );
             ctx.writeAndFlush( buildCmd( ctx.alloc().buffer(), Cmd.EXIT ) );
-//            ctx.writeAndFlush( buildCmd( ctx.alloc().buffer(), Cmd.ALERT ) );
+//            ctx.writeAndFlush( buildCmd( ctx.alloc().buffer(), Cmd.ENTER ) );
+//            ctx.writeAndFlush( buildCmd( ctx.alloc().buffer(), Cmd.EXIT ) );
             ctx.writeAndFlush( buildCmd( ctx.alloc().buffer(), Cmd.KAOQING ) );
+//            ctx.writeAndFlush( buildCmd( ctx.alloc().buffer(), Cmd.ALERT ) );
         }
 
         @Override
@@ -53,7 +54,7 @@ public class GongdiMessageDecoderTest extends BaseClient{
     ByteBuf buildCmd( ByteBuf buffer, org.bbz.srxk.guotu.handler.codec.GongdiMessageDecoderTest.Cmd cmd ){
         buffer.writeByte( HEAD );
         buffer.writeByte( 0 );//长度
-        byte[] baseStationId = {0x1A, 0x22, 0x44, 0x22, 0x1,};
+        byte[] baseStationId = {0x1A,0x22,0x44,0x22,0x04};
         byte[] keyId = {0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11};
         buffer.writeBytes( baseStationId );
         switch( cmd ) {

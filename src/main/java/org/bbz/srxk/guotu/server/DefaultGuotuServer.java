@@ -41,7 +41,7 @@ public class DefaultGuotuServer implements IServer{
     /**
      * 缺省的监听端口
      */
-    public static final int PORT_DEFAULT = 8080;
+    public static final int PORT_DEFAULT = 8001;
 
     /**
      * The alias or pseudonym for this server, used when adding the Via header.

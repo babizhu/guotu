@@ -92,6 +92,7 @@ public interface IServerBootstrap{
      */
     IServerBootstrap withServerAlias( String alias );
 
+
     /**
      * <p>
      * Build and starts the server.
@@ -100,4 +101,5 @@ public interface IServerBootstrap{
      * @return the newly built and started server
      */
     IServer start();
+
 }

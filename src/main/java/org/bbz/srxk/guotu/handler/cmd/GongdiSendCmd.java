@@ -3,9 +3,13 @@ package org.bbz.srxk.guotu.handler.cmd;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
+import lombok.extern.slf4j.Slf4j;
+import org.bbz.srxk.guotu.ServerCfg;
+import org.nutz.http.Http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class GongdiSendCmd{
     private static final Logger LOG = LoggerFactory.getLogger( GongdiSendCmd.class );
     private final ByteBuf data;
@@ -33,7 +37,7 @@ public class GongdiSendCmd{
     }
 
     public String buildAlertUrl(){
-        String url = "host?";
+        String url = "";
         String keyIdStr = ByteBufUtil.hexDump( keyId );
         String baseStationStr = ByteBufUtil.hexDump( baseStationId );
 
@@ -44,7 +48,7 @@ public class GongdiSendCmd{
     }
 
     public String buildUrl(){
-        String url = "host?";
+        String url = "";
         String keyIdStr = ByteBufUtil.hexDump( keyId );
         String baseStationStr = ByteBufUtil.hexDump( baseStationId );
         String cmdIdStr = this.cmdId + "";
@@ -77,7 +81,17 @@ public class GongdiSendCmd{
     }
 
     private void sendRequest( String url ){
-        System.out.println( "GongdiSendCmd.sendRequest:" + url );
+        String webServerHost = ServerCfg.WEB_HOST;
+        try {
+            final String content = Http.get( webServerHost+url, 500 ).getContent();
+            log.info( "sendRequest:" + url + "成功" );
+
+        } catch( Exception e ) {
+            log.error( "发送到" + webServerHost + "的时候出现了异常 " + e.getMessage() );
+            e.printStackTrace();
+        }
+
+//        System.out.println( "GongdiSendCmd.sendRequest:" + url );
     }
 
 }
